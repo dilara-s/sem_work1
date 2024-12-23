@@ -57,14 +57,16 @@
                 <div class="col-md-4 mb-4">
                     <div class="card">
                         <!-- Display song cover image -->
-                        <img src="<c:url value='${song.coverImageUrl}'/>" class="card-img-top" alt="${song.title}">
+                        <img src="<c:url value='${song.coverImage}'/>" class="card-img-top" alt="${song.title}">
                         <div class="card-body">
                             <!-- Song title and artist -->
                             <h5 class="card-title">${song.title}</h5>
                             <p class="card-text">${song.artist}</p>
 
                             <!-- Play button to play the song -->
-                            <button class="btn btn-success mt-2 play-btn" data-audio-url="${song.audioUrl}" data-song-id="${song.id}">Play</button>
+                            <button class="btn btn-success mt-2 play-btn"
+                                    data-audio-url="${song.url}"
+                                    data-song-id="${song.id}">Play</button>
                         </div>
                     </div>
                 </div>
@@ -72,24 +74,74 @@
         </div>
     </div>
 
-    <!-- Audio player and controls -->
-    <div class="container mt-4">
-        <audio id="audio-player" controls>
-            <source id="audio-source" type="audio/mp3">
-            Ваш браузер не поддерживает элемент audio.
-        </audio>
 
-        <!-- Player controls -->
-        <div id="player-controls" class="mt-3">
-            <button id="prev-song" class="btn btn-secondary">Prev</button>
-            <button id="play-pause" class="btn btn-success">Play</button>
-            <button id="next-song" class="btn btn-secondary">Next</button>
-        </div>
 
-        <p id="current-song-title">Now Playing: </p>
-    </div>
+    <audio id="audio-player" controls style="display:none">
+        <source id="audio-source" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const playButtons = document.querySelectorAll('.play-btn');
+            const audioPlayer = document.getElementById('audio-player');
+            const audioSource = document.getElementById('audio-source');
+            let currentlyPlayingButton = null;
 
-    <!-- Include JavaScript file -->
-    <script src="audioPlayer.js"></script>
+            // Add event listener to each play button
+            playButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const songUrl = this.getAttribute('data-audio-url');
+                    const songId = this.getAttribute('data-song-id');
+
+                    if (currentlyPlayingButton === this) {
+                        // If the same button is clicked, toggle play/pause
+                        if (!audioPlayer.paused) {
+                            audioPlayer.pause();
+                            this.classList.remove('btn-danger');
+                            this.classList.add('btn-success');
+                            this.innerText = 'Play';
+                        } else {
+                            audioPlayer.play();
+                            this.classList.remove('btn-success');
+                            this.classList.add('btn-danger');
+                            this.innerText = 'Pause';
+                        }
+                        return;
+                    }
+
+                    // If a different button is clicked, stop current playback
+                    if (currentlyPlayingButton) {
+                        currentlyPlayingButton.classList.remove('btn-danger');
+                        currentlyPlayingButton.classList.add('btn-success');
+                        currentlyPlayingButton.innerText = 'Play';
+                    }
+
+                    // Set the audio source to the song's URL
+                    audioSource.src = songUrl;
+
+                    // Load and play the audio
+                    audioPlayer.load();
+                    audioPlayer.play();
+
+                    // Update UI for the current button
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-danger');
+                    this.innerText = 'Pause';
+
+                    // Set the current button as the active one
+                    currentlyPlayingButton = this;
+
+                    // When the audio ends, reset the button to Play
+                    audioPlayer.onended = () => {
+                        this.classList.remove('btn-danger');
+                        this.classList.add('btn-success');
+                        this.innerText = 'Play';
+                        currentlyPlayingButton = null;
+                    };
+                });
+            });
+        });
+
+    </script>
 
 </body>

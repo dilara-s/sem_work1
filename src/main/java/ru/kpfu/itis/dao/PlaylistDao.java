@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface PlaylistDao {
     public Connection getConnection();
-    public void addPlaylist(Playlist playlist) throws SQLException;
+    public Playlist addPlaylist(Playlist playlist) throws SQLException;
     public void addSongToPlaylist(Long playlistId, Long songId) throws SQLException;//с проверкой что пенся в избранном
     public Playlist getPlaylistById(Long id) throws SQLException;
     public List<Song> getSongsByPlaylistId(Long playlistId) throws SQLException;

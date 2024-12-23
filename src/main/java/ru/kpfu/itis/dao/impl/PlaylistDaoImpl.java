@@ -28,7 +28,7 @@ public class PlaylistDaoImpl implements PlaylistDao {
     }
 
     @Override
-    public void addPlaylist(Playlist playlist) throws SQLException {
+    public Playlist addPlaylist(Playlist playlist) throws SQLException {
         String query = "INSERT INTO playlists (user_id, title) VALUES (?, ?)";
         LOGGER.info("Attempting to add a playlist for userId: {}", playlist.getUserId());
 
@@ -36,11 +36,21 @@ public class PlaylistDaoImpl implements PlaylistDao {
             statement.setLong(1, playlist.getUserId());
             statement.setString(2, playlist.getTitle());
             statement.executeUpdate();
+            ResultSet resultSet = statement.getGeneratedKeys();
+            if (resultSet.next()) {
+                return new Playlist(
+                        resultSet.getLong("id"),
+                        resultSet.getString("title"),
+                        resultSet.getString("cover_image"),
+                        resultSet.getLong("user_id")
+                );
+            }
             LOGGER.info("Playlist added successfully with title: {}", playlist.getTitle());
         } catch (SQLException e) {
             LOGGER.error("Error while adding playlist for userId: {}", playlist.getUserId(), e);
             throw new SQLException("Error while adding playlist", e);
         }
+        return playlist;
     }
 
     @Override

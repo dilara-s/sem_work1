@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-@WebServlet("/playlists/playlistDetails")
+@WebServlet("/playlistDetails")
 public class PlaylistDetailsServlet extends HttpServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(PlaylistDetailsServlet.class);
@@ -32,8 +32,8 @@ public class PlaylistDetailsServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        this.playlistService = new PlaylistService(playlistDao);
-        this.songService = new SongService(songDao);
+        this.playlistService = (PlaylistService) getServletContext().getAttribute("playlistService");
+        this.songService = (SongService) getServletContext().getAttribute("songService");
     }
 
     @Override
@@ -46,6 +46,7 @@ public class PlaylistDetailsServlet extends HttpServlet {
             return;
         }
 
+        LOG.info("id" + req.getParameter("id"));
         Long playlistId = Long.parseLong(req.getParameter("id"));
 
         try {
@@ -55,7 +56,7 @@ public class PlaylistDetailsServlet extends HttpServlet {
             req.setAttribute("playlist", playlist);
             req.setAttribute("songs", songs);
 
-            getServletContext().getRequestDispatcher("/WEB-INF/views/profile/playlist/playlistDetails.jsp").forward(req, resp);
+            getServletContext().getRequestDispatcher("/WEB-INF/views/playlist/playlistDetails.jsp").forward(req, resp);
 
         } catch (SQLException e) {
             LOG.error("Error fetching playlist details for playlistId {}", playlistId, e);

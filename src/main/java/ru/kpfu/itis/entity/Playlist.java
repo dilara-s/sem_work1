@@ -21,6 +21,13 @@ public class Playlist {
         this.userId = userId;
     }
 
+    public Playlist(Long id, String title, String coverImage, Long userId) {
+        this.id = id;
+        this.title = title;
+        this.coverImage = coverImage;
+        this.userId = userId;
+    }
+
     public Long getId() {
         return id;
     }

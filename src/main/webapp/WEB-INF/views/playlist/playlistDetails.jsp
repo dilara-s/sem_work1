@@ -70,8 +70,8 @@
         <h2 class="playlist-header">${playlist.title}</h2>
 
         <!-- Display playlist cover image if exists -->
-        <c:if test="${not empty playlist.coverImageUrl}">
-            <img src="<c:url value='${playlist.coverImageUrl}'/>" alt="${playlist.title}" class="img-fluid">
+        <c:if test="${not empty playlist.coverImage}">
+            <img src="<c:url value='${playlist.coverImage}'/>" alt="${playlist.title}" class="img-fluid">
         </c:if>
 
         <!-- Display playlist description if exists -->
@@ -95,24 +95,5 @@
                 </div>
             </c:forEach>
         </div>
-
-        <!-- Audio player -->
-        <div class="audio-player">
-            <audio id="audio-player" controls>
-                <source id="audio-source" type="audio/mp3">
-                Ваш браузер не поддерживает элемент audio.
-            </audio>
-
-            <div id="player-controls" class="mt-3">
-                <button id="prev-song" class="btn btn-secondary">Prev</button>
-                <button id="play-pause" class="btn btn-success">Play</button>
-                <button id="next-song" class="btn btn-secondary">Next</button>
-            </div>
-
-            <p id="current-song-title">Now Playing: </p>
-        </div>
     </div>
-
-    <!-- JavaScript for handling audio player functionality -->
-    <script src="audioPlayer.js"></script>
 </body>

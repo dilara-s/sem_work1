@@ -76,7 +76,12 @@
                             </div>
                             <div class="form-group">
                                 <label for="songFile">Upload Song File</label>
-                                <input type="file" class="form-control-file" id="songFile" name="songFile" required>
+                                <input type="file" class="form-control-file" id="songFile" name="songFile"  required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="songFile">Upload Image File</label>
+                                <input type="file" class="form-control-file" id="songImage" name="songImage"  required>
                             </div>
                             <button type="submit" class="btn btn-primary">Upload Song</button>
                         </form>
@@ -94,5 +99,7 @@
     <c:if test="${not empty successMessage}">
         <div class="alert alert-success mt-4">${successMessage}</div>
     </c:if>
+
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/upload.js"></script>
 
 </body>

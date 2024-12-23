@@ -10,23 +10,33 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.logging.Logger;
 
 @WebServlet("/songDetails")
 public class SongServlet extends HttpServlet {
 
     private SongService songService;
-    private SongDaoImpl songDao;
+    private final static Logger LOG = Logger.getLogger(SongServlet.class.getName());
 
     @Override
     public void init() throws ServletException {
-        songService = new SongService(songDao);
+        songService = (SongService) getServletContext().getAttribute("songService");
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long songId = Long.parseLong(req.getParameter("id"));
-
         try {
+            // Получаем ID песни из параметра запроса
+
+            String id = req.getParameter("id");
+            LOG.info("id" + id);
+
+
+            Long songId = Long.parseLong(req.getParameter("id"));
+
+            LOG.info("songId: " + songId);
+
+            // Получаем песню по ID
             Song song = songService.getSongById(songId);
 
             if (song == null) {
@@ -34,11 +44,15 @@ public class SongServlet extends HttpServlet {
                 return;
             }
 
+            // Передаём песню на JSP
             req.setAttribute("song", song);
 
-            RequestDispatcher dispatcher = req.getRequestDispatcher("/songDetails.jsp");
+            // Перенаправление на JSP
+            RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/views/songDetails.jsp");
             dispatcher.forward(req, resp);
 
+        } catch (NumberFormatException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid song ID");
         } catch (SQLException e) {
             e.printStackTrace();
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error occurred");
@@ -47,12 +61,17 @@ public class SongServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long songId = Long.parseLong(req.getParameter("id"));
-
         try {
+            // Получаем ID песни из параметра запроса
+            Long songId = Long.parseLong(req.getParameter("id"));
+
+            // Удаляем песню по ID
             songService.deleteSong(songId);
 
-            resp.sendRedirect(req.getContextPath() + "/songs");
+            // Перенаправляем на главную страницу
+            resp.sendRedirect(req.getContextPath() + "/mainPage");
+        } catch (NumberFormatException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid song ID");
         } catch (SQLException e) {
             e.printStackTrace();
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error occurred");

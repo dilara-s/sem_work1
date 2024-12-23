@@ -22,20 +22,14 @@ public class PlaylistService {
         this.playlistDao = playlistDao;
     }
 
-    public void createPlaylist(Playlist playlist) throws SQLException {
+    public Playlist createPlaylist(Playlist playlist) throws SQLException {
         LOGGER.info("Creating playlist for userId: {}", playlist.getUserId());
-        playlistDao.addPlaylist(playlist);
+        LOGGER.info(playlistDao.addPlaylist(playlist).toString());
+        return playlistDao.addPlaylist(playlist);
     }
 
     public void addSongToPlaylist(Long playlistId, Long songId) throws SQLException {
         LOGGER.info("Adding songId: {} to playlistId: {}", songId, playlistId);
-
-        // Проверяем, что песня в избранном
-        if (!favouriteDao.isFavorite(playlistId, songId)) {
-            LOGGER.warn("SongId: {} is not in favorites, cannot add to playlistId: {}", songId, playlistId);
-            throw new SQLException("Song is not in the user's favorites.");
-        }
-
         playlistDao.addSongToPlaylist(playlistId, songId);
     }
 

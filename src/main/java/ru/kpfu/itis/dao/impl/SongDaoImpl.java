@@ -21,14 +21,14 @@ public class SongDaoImpl implements SongDao {
 
     @Override
     public void addSong(Song song) {
-        String query = "INSERT INTO songs (title, artist, /*duration*/, url, /*cover_image,*/ lyrics) VALUES (?, ?, ?, ? /*, ?, ?*/)";
+        String query = "INSERT INTO songs (title, artist, /*duration*/ url, cover_image,  lyrics) VALUES (?, ?, ?, ? , ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
+            logger.info("song from db " + song.getUrl() +" " + song.getTitle());
             statement.setString(1, song.getTitle());
             statement.setString(2, song.getArtist());
-//            statement.setInt(3, song.getDuration());
             statement.setString(3, song.getUrl());
-//            statement.setString(5, song.getCoverImage());
-            statement.setString(4, song.getLyrics());
+            statement.setString(4, song.getCoverImage());
+            statement.setString(5, song.getLyrics());
 
             statement.executeUpdate();
             logger.info("Song added successfully: {}", song.getTitle());
@@ -115,7 +115,8 @@ public class SongDaoImpl implements SongDao {
             statement.setString(1, title);
             statement.setString(2, artist);
             try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next() && resultSet.getInt(1) > 0) {
+                if (resultSet.next() && resultSet.getInt(1) >= 1) {
+                    logger.info("Song exists successfully: {}", resultSet.getInt(2));
                     exists = true;
                     logger.info("Song with title '{}' and artist '{}' exists in the database.", title, artist);
                 } else {
@@ -131,10 +132,10 @@ public class SongDaoImpl implements SongDao {
     @Override
     public List<Song> searchSongs(String query) {
         List<Song> songs = new ArrayList<>();
-        String sqlQuery = "SELECT * FROM songs WHERE title LIKE ? OR artist LIKE ?";
+        String sqlQuery = "SELECT * FROM songs WHERE LOWER(title) LIKE LOWER(?) OR LOWER(artist) LIKE LOWER(?)";
 
         try (PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
-            String searchQuery = "%" + query + "%";
+            String searchQuery = "%" + query.toLowerCase() + "%"; // Приводим запрос к нижнему регистру
             statement.setString(1, searchQuery);
             statement.setString(2, searchQuery);
 
@@ -149,6 +150,7 @@ public class SongDaoImpl implements SongDao {
         }
         return songs;
     }
+
 
     @Override
     public void addSongToPlaylist(Long playlistId, Long songId) {

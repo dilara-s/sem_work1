@@ -87,7 +87,7 @@
                         </div>
                         <div class="card-body">
                             <p class="card-text">This is your playlist. Click below to view or edit it.</p>
-                            <a href="/profile/playlists/${playlist.id}" class="btn btn-success">View Playlist</a>
+                            <a href="<c:url value="/playlistDetails?id=${playlist.id}"/>" class="btn btn-success">View Playlist</a>
                         </div>
                     </div>
                 </div>

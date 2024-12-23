@@ -37,22 +37,23 @@ public class MainPageServlet extends HttpServlet {
         try {
             Long userId = (Long) req.getSession().getAttribute("user_id");
 
+            // Получаем параметр `search` из запроса
             String searchQuery = req.getParameter("search");
 
-            if (searchQuery != null && !searchQuery.isEmpty()) {
-                LOGGER.info("Search query received: {}", searchQuery);
-            } else {
-                LOGGER.info("No search query received.");
-            }
+            LOGGER.info("Search query: " + searchQuery);
 
             List<Song> songs;
 
             if (searchQuery != null && !searchQuery.isEmpty()) {
+                // Если запрос на поиск задан, ищем по нему
+                LOGGER.info("Search query received: {}", searchQuery);
                 songs = songService.searchSongs(searchQuery);
                 req.setAttribute("searchQuery", searchQuery);
                 LOGGER.info("Found {} songs for search query: {}", songs.size(), searchQuery);
             } else {
+                // Если запрос на поиск отсутствует, показываем все песни
                 songs = songService.getAllSongs();
+                req.removeAttribute("searchQuery"); // Убираем старый запрос поиска
                 LOGGER.info("Displaying all {} songs.", songs.size());
             }
 
@@ -61,11 +62,9 @@ public class MainPageServlet extends HttpServlet {
             if (userId == null) {
                 req.setAttribute("authError", "Вы не вошли в аккаунт.");
                 LOGGER.warn("User is not logged in. Redirecting to login page.");
-                // Для неавторизованных пользователей скрываем доступ к кнопке загрузки и добавлению в избранное
                 req.setAttribute("canUpload", false);
                 req.setAttribute("canAddToFavorites", false);
             } else {
-                // Для авторизованных пользователей предоставляем возможность загрузки и добавления в избранное
                 req.setAttribute("canUpload", true);
                 req.setAttribute("canAddToFavorites", true);
             }

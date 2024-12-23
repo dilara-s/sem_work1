@@ -72,7 +72,7 @@
         </c:if>
 
         <!-- Playlist Creation Form -->
-        <form action="${pageContext.request.contextPath}/playlists/create" method="post" enctype="multipart/form-data">
+        <form action="${pageContext.request.contextPath}/playlists/create" method="post">
             <!-- Playlist Name -->
             <div class="form-group">
                 <label for="name">Playlist Name</label>
@@ -85,11 +85,6 @@
                 <textarea id="description" name="description" class="form-control" rows="3" required></textarea>
             </div>
 
-            <!-- Playlist Cover Image -->
-            <div class="form-group">
-                <label for="coverImage">Upload Playlist Cover</label>
-                <input type="file" id="coverImage" name="coverImage" class="form-control-file" accept="image/*">
-            </div>
 
             <!-- Select Songs for Playlist -->
             <h4>Select Songs</h4>

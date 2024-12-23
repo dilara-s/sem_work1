@@ -13,6 +13,7 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Logger;
 
 @WebServlet("/favourites")
 public class FavouriteServlet extends HttpServlet {
@@ -21,6 +22,7 @@ public class FavouriteServlet extends HttpServlet {
     private SongService songService;
     private FavouriteDaoImpl favouriteDao;
     private SongDaoImpl songDao;
+    private final static Logger LOG = Logger.getLogger(FavouriteServlet.class.getName());
 
     @Override
     public void init() throws ServletException {
@@ -68,6 +70,9 @@ public class FavouriteServlet extends HttpServlet {
         String action = req.getParameter("action");
         Long songId = Long.parseLong(req.getParameter("songId"));
 
+
+        LOG.info(action + " " + songId);
+
         try {
             if ("add".equals(action)) {
                 favoriteService.toggleFavorite(currentUser.getId(), songId);
@@ -81,6 +86,6 @@ public class FavouriteServlet extends HttpServlet {
         }
 
         // После изменения фаворита, перенаправляем на список избранных песен
-        resp.sendRedirect(req.getContextPath() + "/favourites");
+        resp.sendRedirect(req.getContextPath() + "/mainPage");
     }
 }
